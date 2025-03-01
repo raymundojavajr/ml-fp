@@ -7,24 +7,25 @@ from pipelines.assets import processed_data_asset
 def get_processed_data_op(context):
     """Materializes and returns the processed data asset."""
     context.log.info("Materializing processed data asset...")
-    processed_data = processed_data_asset()  # Calls the asset function
+    # Convert the generator returned by processed_data_asset() to a list and take the last output
+    asset_outputs = list(processed_data_asset())
+    processed_data = asset_outputs[-1].value
     context.log.info("Processed data asset materialized.")
     return processed_data
 
 @op(out={"model": Out(), "X_test": Out(), "y_test": Out()})
 def train_model_op(context, processed_data):
     """
-    Splits the processed data, trains the model using existing functions,
-    saves the model, and returns a tuple with the model, X_test, and y_test.
+    Splits the processed data using the existing split_data function,
+    trains the model using existing functions, saves the model,
+    and returns a tuple with the model, X_test, and y_test.
     """
     context.log.info("Splitting data using split_data function...")
     from src.data.split_data import split_data  # Reuse your split_data function
     X_train, X_test, y_train, y_test = split_data(processed_data, target="Target")
     
     context.log.info("Training model...")
-    from src.models.train_model import train_model, prepare_features, save_model
-    # Prepare features from the training set
-    X_train, y_train = prepare_features(X_train, target="Target")
+    from src.models.train_model import train_model, save_model
     model = train_model(X_train, y_train)
     save_model(model)
     context.log.info("Model training complete and saved.")
@@ -66,7 +67,6 @@ def ml_pipeline_job():
     model, X_test, y_test = train_model_op(processed_data)
     predict_model_op(model)
     evaluate_model_op(model, X_test, y_test)
-    # Removed the return statement to avoid undefined outputs
 
 @repository
 def ml_ops_repository():
