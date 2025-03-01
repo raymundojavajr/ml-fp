@@ -1,7 +1,5 @@
 # src/data/process_data.py
 
-from pathlib import Path
-import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from .load_data import load_data, find_root
 

@@ -6,7 +6,6 @@ from xgboost import XGBClassifier
 from sklearn.metrics import f1_score, accuracy_score
 from sklearn.model_selection import train_test_split
 from src.data.load_data import find_root
-from src.data.split_data import split_data  # You can reuse if needed
 
 def load_processed_data(file_relative_path="data/processed/predictive_maintenance_processed.csv"):
     """Loads the processed data CSV from a path relative to the project root."""
