@@ -19,7 +19,25 @@ def load_data(find_relative_path="data/raw/predictive_maintenance.csv"):
         raise FileNotFoundError(f"Data file not found at {data_path}")
     return pd.read_csv(data_path)
 
+def load_processed_data(find_relative_path="data/processed/predictive_maintenance_processed.csv"):
+    """
+    Loads the processed data CSV from a path relative to the project root.
+    This should match the path used in save_processed_data in process_data.py.
+    """
+    root = find_root()
+    data_path = root / find_relative_path
+    if not data_path.exists():
+        raise FileNotFoundError(f"Processed data file not found at {data_path}")
+    return pd.read_csv(data_path)
+
 if __name__ == "__main__":
-    df = load_data()
-    print("Data loaded successfully. Here's a preview:")
-    print(df.head())
+    df_raw = load_data()
+    print("Raw data loaded successfully. Preview:")
+    print(df_raw.head())
+
+    try:
+        df_processed = load_processed_data()
+        print("Processed data loaded successfully. Preview:")
+        print(df_processed.head())
+    except FileNotFoundError as e:
+        print(e)

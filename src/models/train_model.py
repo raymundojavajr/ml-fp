@@ -5,15 +5,7 @@ import pandas as pd
 from xgboost import XGBClassifier
 from sklearn.metrics import f1_score, accuracy_score
 from sklearn.model_selection import train_test_split
-from src.data.load_data import find_root
-
-def load_processed_data(file_relative_path="data/processed/predictive_maintenance_processed.csv"):
-    """Loads the processed data CSV from a path relative to the project root."""
-    root = find_root()
-    file_path = root / file_relative_path
-    if not file_path.exists():
-        raise FileNotFoundError(f"Processed data file not found at {file_path}")
-    return pd.read_csv(file_path)
+from src.data.load_data import find_root, load_processed_data  # Updated import
 
 def clean_feature_names(df):
     """Cleans DataFrame column names by removing brackets and replacing spaces with underscores."""
@@ -21,10 +13,7 @@ def clean_feature_names(df):
     return df
 
 def prepare_features(df, target="Target"):
-    """
-    Prepares the feature matrix and target vector.
-    Drops the target column and cleans the feature names.
-    """
+    """Prepares the feature matrix and target vector."""
     X = df.drop(columns=[target])
     y = df[target]
     X = clean_feature_names(X)
@@ -53,16 +42,17 @@ def save_model(model, model_name="trained_model.pkl"):
     print(f"Model saved to: {save_path}")
 
 def main():
-    # Load the stable, processed data
+    # Load the stable, processed data using the centralized function
     df = load_processed_data()
     
     # Clean the DataFrame's column names
     df = clean_feature_names(df)
     
-    # Prepare features (drop target and clean feature names for features)
+    # Prepare features and target
     X, y = prepare_features(df, target="Target")
     
     # Split data into training and test sets
+    from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
     # Train the model on the training set
