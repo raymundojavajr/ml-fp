@@ -26,3 +26,4 @@ This tracker outlines our project tasks, current statuses, and team assignments.
 | **Testing & CI**                  | Write unit tests (pytest) for data processing           | In Progress      | Shem (shared with Jeng & Karth)     | 2025-03-12    | Create tests covering preprocessing, training, and edge cases.       |
 | **Testing & CI**                  | Set up GitHub Actions for CI automation                 | Not Started      | Shem (shared with Jeng & Karth)     | 2025-03-18    | Automate tests on pushes and pull requests.                          |
 | **Notebook & Documentation**      | Update Jupyter Notebook for full system demo            | In Progress      | Shared (Shem lead, with Jeng & Karth)| 2025-03-14    | Include prediction demo, model info retrieval, drift detection, and clear documentation. |
+    

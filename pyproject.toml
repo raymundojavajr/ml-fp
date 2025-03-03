@@ -14,5 +14,6 @@ dependencies = [
     "pip>=25.0.1",
     "pre-commit>=4.1.0",
     "scikit-learn>=1.6.1",
+    "tree>=0.2.4",
     "xgboost>=2.1.4",
 ]
