@@ -1,11 +1,10 @@
 # src/models/train_model.py
 
 import joblib
-import pandas as pd
 from xgboost import XGBClassifier
 from sklearn.metrics import f1_score, accuracy_score
 from sklearn.model_selection import train_test_split
-from src.data.load_data import find_root, load_processed_data  # Updated import
+from src.data.load_data import find_root, load_processed_data 
 
 def clean_feature_names(df):
     """Cleans DataFrame column names by removing brackets and replacing spaces with underscores."""
@@ -52,7 +51,6 @@ def main():
     X, y = prepare_features(df, target="Target")
     
     # Split data into training and test sets
-    from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
     # Train the model on the training set

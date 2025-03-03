@@ -1,9 +1,6 @@
 # orchestrator/jobs.py
 
-from dagster import op, job, repository, Out
-from src.data.load_data import load_processed_data
-from src.models.train_model import main as train_main
-from src.models.predict_model import main as predict_main
+from dagster import op, job
 from src.models.evaluate_model import evaluate
 from src.data.split_data import split_data
 
@@ -31,7 +28,6 @@ def evaluate_model_op(context, model_tuple):
     Evaluates the model on X_test, y_test and logs metrics.
     """
     (model, X_test, y_test) = model_tuple
-    from src.models.evaluate_model import evaluate
     f1, acc = evaluate(y_test, model.predict(X_test))
     context.log.info(f"Evaluation complete: F1 Score = {f1:.4f}, Accuracy = {acc:.4f}")
 

@@ -3,3 +3,4 @@ repos:
     rev: v0.9.7  # Use the version of Ruff you have installed (or update to the latest stable)
     hooks:
       - id: ruff
+        args: ["--fix"]
