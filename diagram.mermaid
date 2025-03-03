@@ -7,7 +7,7 @@ flowchart TD
     subgraph "Model Training & Validation"
         C[Model Training]
         D[Model Validation]
-        E[Drift Detection (Evidently AI)]
+        E["Drift Detection (Evidently AI)"]
     end
 
     subgraph "Experiment Tracking (MLflow)"
@@ -25,7 +25,7 @@ flowchart TD
     end
 
     subgraph "Testing & CI"
-        K[Unit Tests (Pytest)]
+        K["Unit Tests (Pytest)"]
         L[GitHub Actions CI]
     end
 
