@@ -1,0 +1,17 @@
+flowchart TD
+    A[Dataset / Data Source] --> B[Data Ingestion<br/>(Dagster)]
+    B --> C[Data Transformation /<br/>Feature Engineering]
+    C --> D[Model Training]
+    D --> E[Model Validation]
+    E --> F[Drift Detection Report<br/>(Evidently AI)]
+    D --> G[MLflow Experiment Tracking]
+    F --> G
+    G --> H[Model Deployment<br/>(FastAPI)]
+    H --> I[/predict Endpoint]
+    H --> J[/model Endpoint]
+    subgraph Containerization & Orchestration
+        K[Dockerfiles]
+        L[docker-compose]
+    end
+    G --> K
+    K --> L
