@@ -9,6 +9,7 @@ from orchestrator.assets import (
 )
 from orchestrator.jobs import ml_pipeline_job
 
+# Define Dagster assets and jobs for the ML pipeline.
 defs = Definitions(
     assets=[
         processed_data_asset,
