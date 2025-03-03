@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/karth/Documents/MSDS/ml-fp/mlruns/444920494944754938/2632d009537e47f4a634e306bf5950b2/artifacts
+end_time: 1741019747719
+entry_point_name: ''
+experiment_id: '444920494944754938'
+lifecycle_stage: active
+run_id: 2632d009537e47f4a634e306bf5950b2
+run_name: persistent-cow-879
+run_uuid: 2632d009537e47f4a634e306bf5950b2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1741019741605
+status: 3
+tags: []
+user_id: karth

@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1741019747694
+current_stage: None
+description: ''
+last_updated_timestamp: 1741019747694
+name: Champion_Model
+run_id: 2632d009537e47f4a634e306bf5950b2
+run_link: ''
+source: file:///C:/Users/karth/Documents/MSDS/ml-fp/mlruns/444920494944754938/2632d009537e47f4a634e306bf5950b2/artifacts/model
+status: READY
+status_message: null
+storage_location: file:///C:/Users/karth/Documents/MSDS/ml-fp/mlruns/444920494944754938/2632d009537e47f4a634e306bf5950b2/artifacts/model
+user_id: null
+version: 1

@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/karth/Documents/MSDS/ml-fp/mlruns/444920494944754938/e1d4a4bf45724826992d429f2383e44e/artifacts
+end_time: 1741017703801
+entry_point_name: ''
+experiment_id: '444920494944754938'
+lifecycle_stage: active
+run_id: e1d4a4bf45724826992d429f2383e44e
+run_name: powerful-moth-515
+run_uuid: e1d4a4bf45724826992d429f2383e44e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1741017693182
+status: 3
+tags: []
+user_id: karth

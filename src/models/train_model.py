@@ -1,10 +1,12 @@
-# src/models/train_model.py
-
 import joblib
+import pandas as pd
+import mlflow
+import mlflow.xgboost
 from xgboost import XGBClassifier
 from sklearn.metrics import f1_score, accuracy_score
 from sklearn.model_selection import train_test_split
-from src.data.load_data import find_root, load_processed_data 
+from src.data.load_data import find_root, load_processed_data  # Updated import
+from mlflow.tracking import MlflowClient
 
 def clean_feature_names(df):
     """Cleans DataFrame column names by removing brackets and replacing spaces with underscores."""
@@ -19,13 +21,13 @@ def prepare_features(df, target="Target"):
     return X, y
 
 def train_model(X_train, y_train, random_state=42):
-    """Trains an XGBoost classifier on the training data and returns the model."""
+    """Trains an XGBoost classifier and logs it in MLflow."""
     model = XGBClassifier(random_state=random_state, eval_metric="logloss")
     model.fit(X_train, y_train)
     return model
 
 def evaluate_model(model, X_test, y_test):
-    """Evaluates the model on the test set and returns F1 score, accuracy, and predictions."""
+    """Evaluates the model and logs metrics in MLflow."""
     y_pred = model.predict(X_test)
     f1 = f1_score(y_test, y_pred)
     acc = accuracy_score(y_test, y_pred)
@@ -41,28 +43,57 @@ def save_model(model, model_name="trained_model.pkl"):
     print(f"Model saved to: {save_path}")
 
 def main():
-    # Load the stable, processed data using the centralized function
+    # Load and prepare data
     df = load_processed_data()
-    
-    # Clean the DataFrame's column names
     df = clean_feature_names(df)
-    
-    # Prepare features and target
     X, y = prepare_features(df, target="Target")
-    
-    # Split data into training and test sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Start MLflow experiment tracking
+    mlflow.set_tracking_uri("http://127.0.0.1:5000")  # Ensure MLflow tracking URI is set
+    mlflow.set_experiment("Predictive Maintenance")
     
-    # Train the model on the training set
-    model = train_model(X_train, y_train)
+    with mlflow.start_run():
+        model = train_model(X_train, y_train)
+
+        # Evaluate the model
+        f1, acc, _ = evaluate_model(model, X_test, y_test)
+        print(f"Test F1 Score: {f1:.4f}")
+        print(f"Test Accuracy: {acc:.4f}")
+
+        # Log parameters, metrics, and model
+        mlflow.log_param("model_type", "XGBoost")
+        mlflow.log_metric("f1_score", f1)
+        mlflow.log_metric("accuracy", acc)
+
+        # ✅ Register the model in MLflow as "Champion_Model"
+        mlflow.xgboost.log_model(model, "model", registered_model_name="Champion_Model")
+
+        # Save locally
+        save_model(model)
+
+        
+def get_best_model():
+    """Fetch the best model from MLflow based on the highest F1 score."""
+    client = MlflowClient()
     
-    # Evaluate the model on the test set
-    f1, acc, _ = evaluate_model(model, X_test, y_test)
-    print(f"Test F1 Score: {f1:.4f}")
-    print(f"Test Accuracy: {acc:.4f}")
+    # Search for the best run in the "Predictive Maintenance" experiment
+    experiment = client.get_experiment_by_name("Predictive Maintenance")
     
-    # Save the trained model
-    save_model(model)
+    if not experiment:
+        print("Experiment not found. Train a model first!")
+        return None
+
+    runs = client.search_runs(experiment_ids=[experiment.experiment_id], order_by=["metrics.f1_score DESC"])
+
+    if runs:
+        best_run = runs[0]
+        best_model_uri = best_run.info.artifact_uri + "/model"
+        print(f"Champion Model Found: {best_model_uri}")
+        return best_model_uri
+    else:
+        print("No trained models found.")
+        return None
 
 if __name__ == "__main__":
     main()
