@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/karth/Documents/MSDS/ml-fp/mlruns/444920494944754938/237fc7960e8443808261aa47bca71c96/artifacts
+end_time: 1741621281965
+entry_point_name: ''
+experiment_id: '444920494944754938'
+lifecycle_stage: active
+run_id: 237fc7960e8443808261aa47bca71c96
+run_name: stylish-owl-74
+run_uuid: 237fc7960e8443808261aa47bca71c96
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1741621271212
+status: 3
+tags: []
+user_id: karth

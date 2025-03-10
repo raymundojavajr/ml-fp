@@ -1,0 +1,61 @@
+version: "3.8"  # Optional but recommended
+
+services:
+  fastapi_app:
+    image: tiangolo/uvicorn-gunicorn-fastapi:python3.9  # Prebuilt FastAPI image
+    container_name: fastapi_service
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://mlflow:mlflow@db:5432/mlflow_db
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    depends_on:
+      - db
+      - mlflow
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.9.2  # Prebuilt MLflow image
+    container_name: mlflow_service
+    ports:
+      - "5000:5000"
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=postgresql://mlflow:mlflow@db:5432/mlflow_db
+      - MLFLOW_ARTIFACT_URI=/mlflow
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15  # Prebuilt PostgreSQL image
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: mlflow
+      POSTGRES_PASSWORD: mlflow
+      POSTGRES_DB: mlflow_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  drift_detector:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit  # Uses a custom Dockerfile for Streamlit
+    container_name: drift_service
+    ports:
+      - "8501:8501"
+    depends_on:
+      - fastapi_app
+
+  dagster:  # ✅ Corrected indentation & removed duplicate "services:"
+    image: dagster/dagster-k8s:latest  # Kubernetes Dagster deployment
+    container_name: dagster_service
+    ports:
+      - "3000:3000"
+    environment:
+      - DAGSTER_HOME=/dagster_home
+    volumes:
+      - ./dagster_home:/dagster_home
+
+volumes:
+  postgres_data:
