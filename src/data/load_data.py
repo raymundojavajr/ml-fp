@@ -15,29 +15,37 @@ def find_root(marker="README.md"):
 
 def load_data(find_relative_path="data/raw/predictive_maintenance.csv"):
     """Load CSV file from a path relative to project root."""
-    root = find_root()
-    data_path = root / find_relative_path
-    if not data_path.exists():
-        raise FileNotFoundError(f"Data file not found at {data_path}")
-    return pd.read_csv(data_path)
+    try:
+        root = find_root()
+        data_path = root / find_relative_path
+        if not data_path.exists():
+            raise FileNotFoundError(f"Data file not found at {data_path}")
+        return pd.read_csv(data_path)
+    except Exception as e:
+        raise RuntimeError(f"Error loading data: {e}")
 
 
 def load_processed_data(find_relative_path="data/processed/predictive_maintenance_processed.csv"):
     """Load processed CSV file from a path relative to project root."""
-    root = find_root()
-    data_path = root / find_relative_path
-    if not data_path.exists():
-        raise FileNotFoundError(f"Processed data file not found at {data_path}")
-    return pd.read_csv(data_path)
+    try:
+        root = find_root()
+        data_path = root / find_relative_path
+        if not data_path.exists():
+            raise FileNotFoundError(f"Processed data file not found at {data_path}")
+        return pd.read_csv(data_path)
+    except Exception as e:
+        raise RuntimeError(f"Error loading processed data: {e}")
 
 
 if __name__ == "__main__":
-    df_raw = load_data()
-    print("Raw data loaded successfully. Preview:")
-    print(df_raw.head())
     try:
+        df_raw = load_data()
+        print("Raw data loaded successfully. Preview:")
+        print(df_raw.head())
         df_processed = load_processed_data()
         print("Processed data loaded successfully. Preview:")
         print(df_processed.head())
     except FileNotFoundError as e:
-        print(e)
+        print(f"File not found: {e}")
+    except Exception as e:
+        print(f"Error: {e}")

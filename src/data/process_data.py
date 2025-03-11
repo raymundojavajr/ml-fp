@@ -40,19 +40,25 @@ def clean_column_names(df):
 
 def save_processed_data(df, relative_path="data/processed/predictive_maintenance_processed.csv"):
     """Save processed DataFrame to a CSV file."""
-    root = find_root()
-    save_path = root / relative_path
-    save_path.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(save_path, index=False)
-    print(f"Processed data saved to: {save_path}")
+    try:
+        root = find_root()
+        save_path = root / relative_path
+        save_path.parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(save_path, index=False)
+        print(f"Processed data saved to: {save_path}")
+    except Exception as e:
+        raise RuntimeError(f"Error saving processed data: {e}")
 
 
 if __name__ == "__main__":
-    df = load_data()
-    categorical_cols, numerical_cols = define_data_columns()
-    df, _ = encode_categorical_columns(df, categorical_cols)
-    df = drop_original_categorical(df, categorical_cols)
-    df = clean_column_names(df)
-    print("Processed DataFrame preview:")
-    print(df.head())
-    save_processed_data(df)
+    try:
+        df = load_data()
+        categorical_cols, numerical_cols = define_data_columns()
+        df, _ = encode_categorical_columns(df, categorical_cols)
+        df = drop_original_categorical(df, categorical_cols)
+        df = clean_column_names(df)
+        print("Processed DataFrame preview:")
+        print(df.head())
+        save_processed_data(df)
+    except Exception as e:
+        print(f"Error during data processing: {e}")

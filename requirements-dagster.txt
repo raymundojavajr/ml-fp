@@ -1,0 +1,10 @@
+dagster==1.10.4
+dagit==1.10.4
+dagster-postgres
+dagster-pandas
+dagster-mlflow
+pandas
+scikit-learn
+xgboost
+joblib
+mlflow

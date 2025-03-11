@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   fastapi_app:
     build:
@@ -41,15 +43,19 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  dagster:
-    image: dagster/dagster-k8s:latest  
+  dagster_service:  # Make sure this service is defined properly
+    build:
+      context: .
+      dockerfile: Dockerfile.dagster  # Use the custom Dockerfile for Dagster
     container_name: dagster_service
     ports:
       - "3000:3000"
     environment:
       - DAGSTER_HOME=/dagster_home
     volumes:
-      - ./dagster_home:/dagster_home  
+      - ./dagster_home:/dagster_home
+      - ./src:/app/src
+    command: ["dagit", "-h", "0.0.0.0", "-p", "3000"]  # Ensures Dagster web interface runs with dagit
 
 volumes:
   mlflow_data:

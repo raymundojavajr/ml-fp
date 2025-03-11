@@ -3,6 +3,7 @@ import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
+import mlflow
 
 # Load the model
 model_path = "src/models/trained_model.pkl"
@@ -26,16 +27,17 @@ class ModelInput(BaseModel):
 
 @app.post("/predict")
 def predict_endpoint(data: List[ModelInput]):
-    """Make predictions using the trained model."""
-
+    """Make predictions and log results to MLflow."""
+    
     # Convert input data to Pandas DataFrame
     input_df = pd.DataFrame([item.dict() for item in data])
-
-    # Debugging: Print received data
-    print("Received Data:", input_df)
-
+    
     # Make predictions
-    predictions = model.predict(input_df)  # Ensure your model supports `.predict()`
+    predictions = model.predict(input_df)
 
-    # Return predictions as JSON
-    return {"predictions": predictions.tolist()}  # Convert to list for JSON serialization
+    # Log input features & predictions to MLflow
+    with mlflow.start_run():
+        mlflow.log_params(data[0].dict())  # Log first input’s features
+        mlflow.log_metric("prediction", predictions[0])  # Log first prediction
+
+    return {"predictions": predictions.tolist()}
