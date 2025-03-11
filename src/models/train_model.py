@@ -1,5 +1,4 @@
 import joblib
-import pandas as pd
 import mlflow
 import mlflow.xgboost
 from xgboost import XGBClassifier
@@ -135,10 +134,15 @@ def main():
     # Start MLflow experiment tracking
     mlflow.set_tracking_uri("http://127.0.0.1:5000")  # Ensure MLflow tracking URI is set
     mlflow.set_experiment("Predictive Maintenance")
+<<<<<<< HEAD
     
     # Modify here: Add run_name for better identification
     run_name = "training-run-with-featureengineering-X"  # Customize this name as per your run
     with mlflow.start_run(run_name=run_name):  # This will assign the name to the run
+=======
+
+    with mlflow.start_run():
+>>>>>>> 0ddf4bcb82b4c6e0d1efd18c25bfb43b5b741ee9
         model = train_model(X_train, y_train)
 
         # Evaluate the model
@@ -160,5 +164,31 @@ def main():
         # Save the model locally
         save_model(model)
 
+<<<<<<< HEAD
+=======
+
+def get_best_model():
+    """Fetch the best model from MLflow based on the highest F1 score."""
+    client = MlflowClient()
+
+    # Search for the best run in the "Predictive Maintenance" experiment
+    experiment = client.get_experiment_by_name("Predictive Maintenance")
+
+    if not experiment:
+        print("Experiment not found. Train a model first!")
+        return None
+
+    runs = client.search_runs(experiment_ids=[experiment.experiment_id], order_by=["metrics.f1_score DESC"])
+
+    if runs:
+        best_run = runs[0]
+        best_model_uri = best_run.info.artifact_uri + "/model"
+        print(f"Champion Model Found: {best_model_uri}")
+        return best_model_uri
+    else:
+        print("No trained models found.")
+        return None
+
+>>>>>>> 0ddf4bcb82b4c6e0d1efd18c25bfb43b5b741ee9
 if __name__ == "__main__":
     main()

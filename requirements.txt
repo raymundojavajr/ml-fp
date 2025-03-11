@@ -8,6 +8,10 @@ evidently
 matplotlib
 scikit-learn
 requests
+<<<<<<< HEAD
 shap
 pydantic
 python-dotenv
+=======
+pydantic
+>>>>>>> 0ddf4bcb82b4c6e0d1efd18c25bfb43b5b741ee9

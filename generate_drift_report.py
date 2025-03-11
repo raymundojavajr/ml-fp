@@ -3,7 +3,6 @@ import streamlit as st
 from evidently import ColumnMapping
 from evidently.dashboard import Dashboard
 from evidently.dashboard.tabs import DataDriftTab
-from evidently.utils.data_operations import get_dataset_from_uri
 
 # Load your synthetic data for drift testing
 synthetic_data = pd.read_csv("data/processed/synthetic_data.csv")

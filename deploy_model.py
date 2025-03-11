@@ -35,14 +35,25 @@ class ModelInput(BaseModel):
 
 @app.post("/predict")
 def predict_endpoint(data: List[ModelInput]):
+<<<<<<< HEAD
     """Serve predictions and log results to MLflow."""
     try:
         # Load the trained model (champion model from MLflow)
         model = load_model()
+=======
+    """Make predictions and log results to MLflow."""
+
+    # Convert input data to Pandas DataFrame
+    input_df = pd.DataFrame([item.dict() for item in data])
+
+    # Make predictions
+    predictions = model.predict(input_df)
+>>>>>>> 0ddf4bcb82b4c6e0d1efd18c25bfb43b5b741ee9
 
         # Convert input data to Pandas DataFrame
         input_df = pd.DataFrame([item.dict() for item in data])
 
+<<<<<<< HEAD
         # Preprocess input data (ensure consistency with training pipeline)
         # If you have any feature engineering or transformation, apply here
 
@@ -111,3 +122,6 @@ def get_best_model():
     else:
         print("No trained models found.")
         return None
+=======
+    return {"predictions": predictions.tolist()}
+>>>>>>> 0ddf4bcb82b4c6e0d1efd18c25bfb43b5b741ee9
