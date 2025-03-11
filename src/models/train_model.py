@@ -1,5 +1,4 @@
 import joblib
-import pandas as pd
 import mlflow
 import mlflow.xgboost
 from xgboost import XGBClassifier
@@ -52,7 +51,7 @@ def main():
     # Start MLflow experiment tracking
     mlflow.set_tracking_uri("http://127.0.0.1:5000")  # Ensure MLflow tracking URI is set
     mlflow.set_experiment("Predictive Maintenance")
-    
+
     with mlflow.start_run():
         model = train_model(X_train, y_train)
 
@@ -72,14 +71,14 @@ def main():
         # Save locally
         save_model(model)
 
-        
+
 def get_best_model():
     """Fetch the best model from MLflow based on the highest F1 score."""
     client = MlflowClient()
-    
+
     # Search for the best run in the "Predictive Maintenance" experiment
     experiment = client.get_experiment_by_name("Predictive Maintenance")
-    
+
     if not experiment:
         print("Experiment not found. Train a model first!")
         return None
