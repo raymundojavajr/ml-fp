@@ -8,4 +8,6 @@ evidently
 matplotlib
 scikit-learn
 requests
+shap
 pydantic
+python-dotenv

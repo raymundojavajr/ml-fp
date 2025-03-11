@@ -1,0 +1,7 @@
+2025-03-11 23:00:36 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 963 - LOGS_CAPTURED - Started capturing logs in process (pid: 963).
+2025-03-11 23:00:36 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 963 - load_and_preprocess_op - STEP_START - Started execution of step "load_and_preprocess_op".
+2025-03-11 23:00:36 +0000 - dagster - INFO - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - load_and_preprocess_op - Loading and preprocessing data...
+2025-03-11 23:00:36 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 963 - load_and_preprocess_op - STEP_OUTPUT - Yielded output "result" of type "Any". (Type check passed).
+2025-03-11 23:00:36 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - load_and_preprocess_op - Writing file at: /dagster_home/storage/e92ee909-a989-4a41-b699-423dba49a9d7/load_and_preprocess_op/result using PickledObjectFilesystemIOManager...
+2025-03-11 23:00:36 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 963 - load_and_preprocess_op - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+2025-03-11 23:00:36 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 963 - load_and_preprocess_op - STEP_SUCCESS - Finished execution of step "load_and_preprocess_op" in 180ms.
