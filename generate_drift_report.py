@@ -1,33 +1,29 @@
 import pandas as pd
-import mlflow
+import streamlit as st
 from evidently import ColumnMapping
 from evidently.dashboard import Dashboard
 from evidently.dashboard.tabs import DataDriftTab
-from src.data.load_data import load_processed_data  
-def generate_drift_report(training_data_path="data/processed/training_data.csv"):
-    # Load training and prediction data
-    training_data = pd.read_csv(training_data_path)
-    prediction_data = load_processed_data()  # Replace with how you load prediction data
-    
-    # Define the column mapping
-    column_mapping = ColumnMapping(
-        target="Target",  # Replace with your actual target column name
-        numerical_features=["Air_temperature_K", "Process_temperature_K", "Rotational_speed_rpm", "Torque_Nm", "Tool_wear_min"],
-        categorical_features=["Type_encoded", "Product_ID_encoded", "Failure_Type_encoded"]  # Replace with your actual features
-    )
+from evidently.utils.data_operations import get_dataset_from_uri
 
-    # Create the Evidently Dashboard to display drift
-    dashboard = Dashboard(tabs=[DataDriftTab()])
-    dashboard.calculate(training_data, prediction_data, column_mapping)
-    
-    # Save the drift report
-    drift_report_path = "drift_report.html"
-    dashboard.save(drift_report_path)
-    print(f"Drift report saved as '{drift_report_path}'.")
+# Load your synthetic data for drift testing
+synthetic_data = pd.read_csv("data/processed/synthetic_data.csv")
 
-    # Log drift report as an artifact in MLflow
-    mlflow.log_artifact(drift_report_path)
-    print("Drift report logged to MLflow.")
+# Here you can load your baseline data (pre-processed original data)
+original_data = pd.read_csv("data/processed/predictive_maintenance_processed.csv")
 
-# Run the function to generate the drift report
-generate_drift_report()
+# Initialize the ColumnMapping for drift detection
+column_mapping = ColumnMapping(
+    target="Target",  # Your target column in the dataset
+    numeric_features=["UDI","Air temper", "Process te", "Rotational", "Torque [Nr]", "Tool wear"],
+    categorical_features=["Product ID", "Type"],
+    datetime_features=[]
+)
+
+# Initialize Evidently dashboard for drift detection
+dashboard = Dashboard(tabs=[DataDriftTab()])
+dashboard.calculate(original_data, synthetic_data)
+
+# Display the drift report
+st.title("Data Drift Detection Report")
+st.write("This is the drift report for comparing synthetic data with original data.")
+dashboard.show()
