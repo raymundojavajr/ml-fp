@@ -132,21 +132,16 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # Start MLflow experiment tracking
-    mlflow.set_tracking_uri("http://127.0.0.1:5000")  # Ensure MLflow tracking URI is set
+    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))  # Ensure MLflow tracking URI is set
     mlflow.set_experiment("Predictive Maintenance")
-<<<<<<< HEAD
-    
-    # Modify here: Add run_name for better identification
+
     run_name = "training-run-with-featureengineering-X"  # Customize this name as per your run
     with mlflow.start_run(run_name=run_name):  # This will assign the name to the run
-=======
-
-    with mlflow.start_run():
->>>>>>> 0ddf4bcb82b4c6e0d1efd18c25bfb43b5b741ee9
+        # Train the model
         model = train_model(X_train, y_train)
 
         # Evaluate the model
-        f1, acc, _ = evaluate_model(model, X_test, y_test)
+        f1, acc = evaluate(y_test, model.predict(X_test))  # Use the evaluate function to get f1 and accuracy
         print(f"Test F1 Score: {f1:.4f}")
         print(f"Test Accuracy: {acc:.4f}")
 
@@ -163,10 +158,7 @@ def main():
 
         # Save the model locally
         save_model(model)
-
-<<<<<<< HEAD
-=======
-
+        
 def get_best_model():
     """Fetch the best model from MLflow based on the highest F1 score."""
     client = MlflowClient()
@@ -189,6 +181,5 @@ def get_best_model():
         print("No trained models found.")
         return None
 
->>>>>>> 0ddf4bcb82b4c6e0d1efd18c25bfb43b5b741ee9
 if __name__ == "__main__":
     main()

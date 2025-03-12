@@ -1,7 +1,7 @@
-# Dockerfile.mlflow
+# Start from a base Python 3.9 image
 FROM python:3.9
 
-# Install MLflow and dependencies
+# Install MLflow and extra dependencies
 RUN pip install mlflow[extras]
 
 # Install psycopg2 for PostgreSQL support
@@ -10,5 +10,5 @@ RUN pip install psycopg2-binary
 # Expose port for MLflow UI
 EXPOSE 5000
 
-# Run MLflow
+# Run MLflow UI
 CMD ["mlflow", "ui", "--host", "0.0.0.0"]

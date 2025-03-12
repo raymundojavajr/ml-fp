@@ -6,6 +6,7 @@ from typing import List
 import mlflow
 import shap
 import joblib
+import os
 
 # Load the "champion" model from MLflow
 def load_model():
@@ -35,27 +36,14 @@ class ModelInput(BaseModel):
 
 @app.post("/predict")
 def predict_endpoint(data: List[ModelInput]):
-<<<<<<< HEAD
-    """Serve predictions and log results to MLflow."""
+    """Make predictions and log results to MLflow."""
+
     try:
         # Load the trained model (champion model from MLflow)
         model = load_model()
-=======
-    """Make predictions and log results to MLflow."""
-
-    # Convert input data to Pandas DataFrame
-    input_df = pd.DataFrame([item.dict() for item in data])
-
-    # Make predictions
-    predictions = model.predict(input_df)
->>>>>>> 0ddf4bcb82b4c6e0d1efd18c25bfb43b5b741ee9
 
         # Convert input data to Pandas DataFrame
         input_df = pd.DataFrame([item.dict() for item in data])
-
-<<<<<<< HEAD
-        # Preprocess input data (ensure consistency with training pipeline)
-        # If you have any feature engineering or transformation, apply here
 
         # Make predictions
         predictions = model.predict(input_df)
@@ -84,11 +72,26 @@ def model_info():
             "n_estimators": model.get_params()["n_estimators"]
         }
 
-        # Get important features (using SHAP to retrieve feature importance)
-        # Generate SHAP plot and use top features
-        input_df = pd.DataFrame([item.dict() for item in ModelInput.schema_.get('properties').keys()])
+        # Example input data for SHAP
+        sample_input = {
+            "UDI": 12345,
+            "Air_temperature_K": 300.0,
+            "Process_temperature_K": 290.0,
+            "Rotational_speed_rpm": 1500,
+            "Torque_Nm": 30.0,
+            "Tool_wear_min": 25,
+            "Type_encoded": 1,
+            "Product_ID_encoded": 10,
+            "Failure_Type_encoded": 3
+        }
+
+        input_df = pd.DataFrame([sample_input])
+
+        # SHAP explanation
         explainer = shap.Explainer(model)
         shap_values = explainer(input_df)
+
+        # Get important features
         important_features = [f"{feat} ({round(val, 3)})" for feat, val in zip(input_df.columns, shap_values.mean(0))]
 
         # Return model information
@@ -122,6 +125,23 @@ def get_best_model():
     else:
         print("No trained models found.")
         return None
-=======
-    return {"predictions": predictions.tolist()}
->>>>>>> 0ddf4bcb82b4c6e0d1efd18c25bfb43b5b741ee9
+
+@app.get("/")
+def read_root():
+    return {"message": "FastAPI is running"}
+
+@app.get("/mlflow_test")
+def test_mlflow():
+    try:
+        # Set MLflow tracking URI
+        mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+
+        # Try logging a dummy parameter and metric to MLflow to see if it's working
+        with mlflow.start_run():
+            mlflow.log_param("param1", "value1")
+            mlflow.log_metric("metric1", 0.1)
+        
+        return {"message": "MLflow is connected and working"}
+    
+    except Exception as e:
+        return {"error": f"Error in MLflow: {str(e)}"}

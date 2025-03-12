@@ -48,3 +48,14 @@ dependencies = [
     "xgboost>=2.1.4",
     "zipp>=3.21.0",
 ]
+
+[tool.dagster]
+storage = {postgresql = "postgresql://mlflow:mlflow@db:5432/mlflow_db"}
+run_storage = {postgresql = "postgresql://mlflow:mlflow@db:5432/mlflow_db"}
+event_log_storage = {postgresql = "postgresql://mlflow:mlflow@db:5432/mlflow_db"}
+
+
+# MLflow configuration
+[dagster.mlflow]
+tracking_uri = "http://mlflow_service:5000"  # MLflow service URL in the Docker Compose file
+

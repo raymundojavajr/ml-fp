@@ -1,27 +1,32 @@
 # Start from a base Python image
 FROM python:3.9-slim
 
-# Install system dependencies for Dagster and its dependencies (including databases and ML tools)
+# Install system dependencies for Dagster and its dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
     git \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the Dagster specific requirements-dagster.txt file
-COPY requirements-dagster.txt /app/
+# Copy the pyproject.toml to verify
+COPY pyproject.toml /app/
+RUN ls -l /app/  # List the files to confirm that pyproject.toml is copied
 
-# Install dependencies for Dagster
+# Install Python dependencies
+COPY requirements-dagster.txt /app/
 RUN pip install --no-cache-dir -r requirements-dagster.txt
 
-# Copy your Dagster pipeline code into the container
-COPY . /app
+# Set up Dagster and the web server
+COPY orchestrator /app/orchestrator
+COPY dagster_home /app/dagster_home
+COPY mlflow_artifacts /app/mlflow_artifacts
 
 # Expose the Dagster UI port
 EXPOSE 3000
 
-# Command to run Dagster's web UI using dagit
-CMD ["dagit", "-h", "0.0.0.0", "-p", "3000"]
+# Command to run the Dagster web UI using dagster-webserver
+CMD ["dagster-webserver", "-h", "0.0.0.0", "-p", "3000"]

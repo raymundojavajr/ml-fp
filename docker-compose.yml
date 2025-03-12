@@ -15,7 +15,7 @@ services:
       - db
       - mlflow_service
     volumes:
-      - .:/app
+      - .:/app  # Ensure your FastAPI app is mounted
     command: uvicorn deploy_model:app --host 0.0.0.0 --port 8000
 
   mlflow_service:
@@ -29,7 +29,7 @@ services:
       - MLFLOW_BACKEND_STORE_URI=postgresql://mlflow:mlflow@db:5432/mlflow_db
       - MLFLOW_ARTIFACT_URI=/mlflow
     volumes:
-      - mlflow_data:/mlflow
+      - mlflow_data:/mlflow  # Mount volume for persistent data storage
 
   db:
     image: postgres:15
@@ -41,12 +41,12 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data  # Mount volume for persistent database storage
 
-  dagster_service:  # Make sure this service is defined properly
+  dagster_service:
     build:
       context: .
-      dockerfile: Dockerfile.dagster  # Use the custom Dockerfile for Dagster
+      dockerfile: Dockerfile.dagster
     container_name: dagster_service
     ports:
       - "3000:3000"
@@ -55,7 +55,7 @@ services:
     volumes:
       - ./dagster_home:/dagster_home
       - ./src:/app/src
-    command: ["dagit", "-h", "0.0.0.0", "-p", "3000"]  # Ensures Dagster web interface runs with dagit
+    command: ["dagster-webserver", "-h", "0.0.0.0", "-p", "3000"]  # Ensure Dagster web interface runs with dagster-webserver
 
 volumes:
   mlflow_data:
