@@ -23,7 +23,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install uv pre-commit pytest
-          uv add pandas
 
       - name: Install dependencies with uv
         run: uv sync
