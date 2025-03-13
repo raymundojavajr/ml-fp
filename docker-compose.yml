@@ -55,6 +55,7 @@ services:
     volumes:
       - ./dagster_home:/dagster_home
       - ./src:/app/src
+      - ./workspace.yaml:/app/workspace.yaml
     command: ["dagster-webserver", "-h", "0.0.0.0", "-p", "3000"]  # Ensure Dagster web interface runs with dagster-webserver
 
 volumes:
