@@ -23,11 +23,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install uv pre-commit pytest
-          # Use uv to add required packages (e.g., pandas)
-          uv add pandas
 
       - name: Install dependencies with uv
         run: uv sync
+
+      - name: Debug: List installed packages (filter for pandas)
+        run: pip freeze | grep pandas
 
       - name: Run pre-commit hooks
         run: pre-commit run --all-files
