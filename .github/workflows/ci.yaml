@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -24,14 +24,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install uv pre-commit pytest
 
-      - name: Install dependencies with uv
+      - name: Install Dependencies with uv
         run: uv sync
 
-      - name: Debug: List installed packages (filter for pandas)
-        run: .venv/bin/pip freeze | grep pandas
-
-      - name: Run pre-commit hooks
-        run: .venv/bin/pre-commit run --all-files
-
-      - name: Run Pytest
+      - name: Run Pytest Tests
         run: .venv/bin/pytest --maxfail=1 --disable-warnings -q
