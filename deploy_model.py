@@ -28,10 +28,10 @@ class ModelInput(BaseModel):
 @app.post("/predict")
 def predict_endpoint(data: List[ModelInput]):
     """Make predictions and log results to MLflow."""
-    
+
     # Convert input data to Pandas DataFrame
     input_df = pd.DataFrame([item.dict() for item in data])
-    
+
     # Make predictions
     predictions = model.predict(input_df)
 
