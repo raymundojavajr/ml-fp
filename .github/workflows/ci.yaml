@@ -27,8 +27,11 @@ jobs:
       - name: Install dependencies with uv
         run: uv sync
 
+      - name: Debug: List installed packages (filter for pandas)
+        run: .venv/bin/pip freeze | grep pandas
+
       - name: Run pre-commit hooks
-        run: pre-commit run --all-files
+        run: .venv/bin/pre-commit run --all-files
 
       - name: Run Pytest
-        run: pytest --maxfail=1 --disable-warnings -q
+        run: .venv/bin/pytest --maxfail=1 --disable-warnings -q
