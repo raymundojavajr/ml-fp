@@ -28,9 +28,6 @@ jobs:
       - name: Install dependencies with uv
         run: uv sync
 
-      - name: Debug: List installed packages (filter for pandas)
-        run: pip freeze | grep pandas
-
       - name: Run pre-commit hooks
         run: pre-commit run --all-files
 
