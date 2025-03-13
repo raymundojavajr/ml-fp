@@ -20,7 +20,11 @@ RUN ls -l /app/  # List the files to confirm that pyproject.toml is copied
 COPY requirements-dagster.txt /app/
 RUN pip install --no-cache-dir -r requirements-dagster.txt
 
+# Set the Python path to ensure Python can find orchestrator
+ENV PYTHONPATH=/app
+
 # Set up Dagster and the web server
+COPY data /app/data
 COPY orchestrator /app/orchestrator
 COPY dagster_home /app/dagster_home
 COPY mlflow_artifacts /app/mlflow_artifacts

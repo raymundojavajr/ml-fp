@@ -1,5 +1,5 @@
 from dagster import op, job
-from src.models.evaluate_model import evaluate  # Import evaluate function
+from src.models.evaluate_model import evaluate
 from src.data.split_data import split_data
 from src.models.train_model import load_processed_data, clean_feature_names, prepare_features, train_model
 from src.models.predict_model import predict
@@ -8,9 +8,25 @@ from src.models.predict_model import predict
 def load_and_preprocess_op(context):
     """Load and preprocess data."""
     context.log.info("Loading and preprocessing data...")
-    df = load_processed_data()
-    df = clean_feature_names(df)
-    return df  # Return the full DataFrame
+    try:
+        # Attempt to load the data
+        df = load_processed_data()
+        context.log.info(f"Data loaded successfully, first few rows:\n{df.head()}")
+        
+        # Check if data is empty or malformed
+        if df.empty:
+            context.log.error("Loaded data is empty!")
+            raise ValueError("Loaded data is empty")
+        
+        # Proceed to clean feature names
+        df = clean_feature_names(df)
+        context.log.info(f"Feature names cleaned successfully, first few rows:\n{df.head()}")
+        
+        return df  # Return the full DataFrame
+    except Exception as e:
+        context.log.error(f"Error in load_and_preprocess_op: {str(e)}")
+        raise
+
 
 @op
 def split_data_op(context, df):
@@ -18,12 +34,14 @@ def split_data_op(context, df):
     context.log.info("Splitting data...")
     return split_data(df, target="Target")
 
+
 @op
 def prepare_training_op(context, df):
     """Prepare features and target for training."""
     context.log.info("Preparing features and target...")
-    _, _ = prepare_features(df, target="Target")  # This op can perform additional logic if needed
+    _, _ = prepare_features(df, target="Target")
     return df
+
 
 @op
 def train_model_op(context, split_data):
@@ -33,12 +51,14 @@ def train_model_op(context, split_data):
     model = train_model(X_train, y_train)
     return model, X_test, y_test
 
+
 @op
 def evaluate_model_op(context, model_tuple):
     """Evaluate model and log metrics."""
     model, X_test, y_test = model_tuple
-    f1, acc = evaluate(y_test, model.predict(X_test))  # Update the function call
+    f1, acc = evaluate(y_test, model.predict(X_test))
     context.log.info(f"Evaluation complete: F1 Score = {f1:.4f}, Accuracy = {acc:.4f}")
+
 
 @op
 def predict_model_op(context, model_tuple):
@@ -52,11 +72,11 @@ def predict_model_op(context, model_tuple):
     context.log.info(f"Predictions generated: {predictions[:10]}")
     return predictions
 
+
 @job
 def ml_pipeline_job():
     """Run detailed ML pipeline for better graph visualization."""
     df = load_and_preprocess_op()
-    # Optionally, prepare features further if needed:
     prepared_df = prepare_training_op(df)
     split = split_data_op(prepared_df)
     model_tuple = train_model_op(split)

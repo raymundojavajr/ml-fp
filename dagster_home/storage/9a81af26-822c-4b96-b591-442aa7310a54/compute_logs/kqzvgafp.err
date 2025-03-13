@@ -1,0 +1,33 @@
+[32m2025-03-12 21:15:04 +0000[0m - dagster - [34mDEBUG[0m - ml_pipeline_job - 9a81af26-822c-4b96-b591-442aa7310a54 - 60 - LOGS_CAPTURED - Started capturing logs in process (pid: 60).
+[32m2025-03-12 21:15:04 +0000[0m - dagster - [34mDEBUG[0m - ml_pipeline_job - 9a81af26-822c-4b96-b591-442aa7310a54 - 60 - load_and_preprocess_op - STEP_START - Started execution of step "load_and_preprocess_op".
+[32m2025-03-12 21:15:04 +0000[0m - dagster - [34mINFO[0m - ml_pipeline_job - 9a81af26-822c-4b96-b591-442aa7310a54 - load_and_preprocess_op - Loading and preprocessing data...
+[32m2025-03-12 21:15:04 +0000[0m - dagster - [34mERROR[0m - [31mml_pipeline_job - 9a81af26-822c-4b96-b591-442aa7310a54 - load_and_preprocess_op - Error in load_and_preprocess_op: Error loading processed data: Marker file README.md not found in any parent directory of /app[0m
+[32m2025-03-12 21:15:04 +0000[0m - dagster - [34mERROR[0m - [31mml_pipeline_job - 9a81af26-822c-4b96-b591-442aa7310a54 - 60 - load_and_preprocess_op - STEP_FAILURE - Execution of step "load_and_preprocess_op" failed.
+
+dagster._core.errors.DagsterExecutionStepExecutionError: Error occurred while executing op "load_and_preprocess_op"::
+
+RuntimeError: Error loading processed data: Marker file README.md not found in any parent directory of /app
+
+Stack Trace:
+  File "/usr/local/lib/python3.9/site-packages/dagster/_core/execution/plan/utils.py", line 56, in op_execution_error_boundary
+    yield
+  File "/usr/local/lib/python3.9/site-packages/dagster/_utils/__init__.py", line 480, in iterate_with_context
+    next_output = next(iterator)
+  File "/usr/local/lib/python3.9/site-packages/dagster/_core/execution/plan/compute_generator.py", line 127, in _coerce_op_compute_fn_to_iterator
+    result = invoke_compute_fn(
+  File "/usr/local/lib/python3.9/site-packages/dagster/_core/execution/plan/compute_generator.py", line 115, in invoke_compute_fn
+    return fn(context, **args_to_pass) if context_arg_provided else fn(**args_to_pass)
+  File "/app/orchestrator/jobs.py", line 13, in load_and_preprocess_op
+    df = load_processed_data()
+  File "/app/src/data/load_data.py", line 37, in load_processed_data
+    raise RuntimeError(f"Error loading processed data: {e}")
+
+The above exception occurred during handling of the following exception:
+FileNotFoundError: Marker file README.md not found in any parent directory of /app
+
+Stack Trace:
+  File "/app/src/data/load_data.py", line 31, in load_processed_data
+    root = find_root()
+  File "/app/src/data/load_data.py", line 13, in find_root
+    raise FileNotFoundError(f"Marker file {marker} not found in any parent directory of {current_dir}")
+[0m
