@@ -2,30 +2,36 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ final ]
   pull_request:
-    branches: [ main ]
+    branches: [ final ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.12
+          python-version: '3.12'
 
-      - name: Install Dependencies
+      - name: Install uv, pre-commit, and pytest
         run: |
           python -m pip install --upgrade pip
           pip install uv pre-commit pytest
-          uv sync
+          uv add pandas
 
-      - name: Run Pre-commit Hooks
+      - name: Install dependencies with uv
+        run: uv sync
+
+      - name: Debug: List installed packages (filter for pandas)
+        run: pip freeze | grep pandas
+
+      - name: Run pre-commit hooks
         run: pre-commit run --all-files
 
       - name: Run Pytest
