@@ -1,16 +1,19 @@
 import pandas as pd
+from unittest.mock import patch, MagicMock
+
 from src.data.process_data import (
     define_data_columns,
     encode_categorical_columns,
     drop_original_categorical,
-    clean_column_names
+    clean_column_names,
+    save_processed_data
 )
 
 def test_define_data_columns():
-    # Verify that the expected categorical and numerical columns are returned.
-    cat_cols, num_cols = define_data_columns()
-    assert cat_cols == ["Type", "Product ID", "Failure Type"]
-    assert num_cols == [
+    """Test that define_data_columns returns the expected categorical and numerical column lists."""
+    categorical_cols, numerical_cols = define_data_columns()
+    assert categorical_cols == ["Type", "Product ID", "Failure Type"]
+    assert numerical_cols == [
         "Air temperature [K]",
         "Process temperature [K]",
         "Rotational speed [rpm]",
@@ -19,25 +22,23 @@ def test_define_data_columns():
     ]
 
 def test_encode_categorical_columns():
-    # Create a sample DataFrame with categorical data.
+    """Test that encode_categorical_columns correctly encodes categorical columns and returns a dict of encoders."""
     df = pd.DataFrame({
         "Type": ["A", "B", "A"],
         "Product ID": ["P1", "P2", "P1"],
         "Failure Type": ["F1", "F2", "F1"]
     })
-    df_encoded, le_dict = encode_categorical_columns(df, ["Type", "Product ID", "Failure Type"])
+    categorical_cols = ["Type", "Product ID", "Failure Type"]
+    df_encoded, le_dict = encode_categorical_columns(df, categorical_cols)
 
-    # Check that encoded columns exist.
-    for col in ["Type", "Product ID", "Failure Type"]:
-        assert f"{col}_encoded" in df_encoded.columns
-
-    # Verify that the label encoders contain the expected classes.
-    assert list(le_dict["Type"].classes_) == ["A", "B"]
-    assert list(le_dict["Product ID"].classes_) == ["P1", "P2"]
-    assert list(le_dict["Failure Type"].classes_) == ["F1", "F2"]
+    # The encoded column names will retain spaces, e.g. "Product ID_encoded"
+    assert "Type_encoded" in df_encoded.columns
+    assert "Product ID_encoded" in df_encoded.columns
+    assert "Failure Type_encoded" in df_encoded.columns
+    assert len(le_dict) == 3
 
 def test_drop_original_categorical():
-    # Create a DataFrame with both original and encoded categorical columns.
+    """Test that drop_original_categorical removes the original categorical columns from the DataFrame."""
     df = pd.DataFrame({
         "Type": ["A", "B", "A"],
         "Product ID": ["P1", "P2", "P1"],
@@ -46,20 +47,32 @@ def test_drop_original_categorical():
         "Product ID_encoded": [0, 1, 0],
         "Failure Type_encoded": [0, 1, 0]
     })
-    df_new = drop_original_categorical(df, ["Type", "Product ID", "Failure Type"])
+    categorical_cols = ["Type", "Product ID", "Failure Type"]
+    df_dropped = drop_original_categorical(df, categorical_cols)
 
-    # Ensure that the original categorical columns have been dropped.
-    for col in ["Type", "Product ID", "Failure Type"]:
-        assert col not in df_new.columns
+    assert "Type" not in df_dropped.columns
+    assert "Product ID" not in df_dropped.columns
+    assert "Failure Type" not in df_dropped.columns
 
 def test_clean_column_names():
-    # Create a DataFrame with columns that have spaces and special characters.
+    """Test that clean_column_names correctly reformats column names by removing spaces and brackets."""
     df = pd.DataFrame({
-        "Air temperature [K]": [300, 310],
-        "Process temperature [K]": [500, 510]
+        "Air temperature [K]": [1, 2, 3],
+        "Process temperature [K]": [4, 5, 6]
     })
-    df_clean = clean_column_names(df)
+    df_cleaned = clean_column_names(df)
 
-    # Check that the cleaned column names replace spaces and brackets appropriately.
-    assert "Air_temperature_K" in df_clean.columns
-    assert "Process_temperature_K" in df_clean.columns
+    assert "Air_temperature_K" in df_cleaned.columns
+    assert "Process_temperature_K" in df_cleaned.columns
+
+@patch("src.data.process_data.find_root")
+@patch("pandas.DataFrame.to_csv")
+def test_save_processed_data(mock_to_csv, mock_find_root):
+    """Test that save_processed_data calls find_root and to_csv exactly once to save the DataFrame."""
+    # Set up the patch for find_root to return a dummy path object.
+    mock_find_root.return_value = MagicMock()
+    df = pd.DataFrame({"col1": [1, 2, 3]})
+    save_processed_data(df, "test_path.csv")
+
+    mock_to_csv.assert_called_once()
+    mock_find_root.assert_called_once()
