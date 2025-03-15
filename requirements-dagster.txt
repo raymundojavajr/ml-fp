@@ -5,8 +5,6 @@ dagster-pandas
 dagster-mlflow
 pandas
 scikit-learn
-shap
-evidently
 xgboost
 joblib
 mlflow

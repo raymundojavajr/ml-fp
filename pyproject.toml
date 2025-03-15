@@ -7,29 +7,13 @@ requires-python = ">=3.12"
 dependencies = [
     "dagit>=1.10.3",
     "dagster>=1.10.3",
-    "docker>=7.1.0",
-    "fastapi>=0.115.11",
     "ipykernel>=6.29.5",
     "kagglehub>=0.3.10",
     "matplotlib>=3.10.1",
-    "mlflow>=2.20.4",
     "pandas>=2.2.3",
     "pip>=25.0.1",
     "pre-commit>=4.1.0",
-    "pytest>=8.3.5",
-    "ruff>=0.10.0",
     "scikit-learn>=1.6.1",
     "tree>=0.2.4",
     "xgboost>=2.1.4",
 ]
-
-[tool.dagster]
-storage = {postgresql = "postgresql://mlflow:mlflow@db:5432/mlflow_db"}
-run_storage = {postgresql = "postgresql://mlflow:mlflow@db:5432/mlflow_db"}
-event_log_storage = {postgresql = "postgresql://mlflow:mlflow@db:5432/mlflow_db"}
-
-
-# MLflow configuration
-[dagster.mlflow]
-tracking_uri = "http://mlflow_service:5000"  # MLflow service URL in the Docker Compose file
-

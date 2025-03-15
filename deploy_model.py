@@ -1,28 +1,25 @@
 import pickle
 import pandas as pd
-from fastapi import FastAPI, HTTPException
+import mlflow
+from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
-import mlflow
-import shap
-import joblib
-import os
+from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score
+from evidently.metric_preset import DataDriftPreset
+from evidently.report import Report
 
-# Load the "champion" model from MLflow
-def load_model():
-    """Load the champion model from MLflow."""
-    client = mlflow.tracking.MlflowClient()
-    # Retrieve the best model URI from MLflow
-    best_model_uri = get_best_model()
-    if best_model_uri is None:
-        raise HTTPException(status_code=500, detail="Champion model not found in MLflow")
-    model = mlflow.xgboost.load_model(best_model_uri)
-    return model
+# Load the trained model
+model_path = "src/models/trained_model.pkl"
+with open(model_path, "rb") as f:
+    model = pickle.load(f)
 
-# FastAPI App Initialization
+# Load reference dataset for drift detection
+reference_path = "data/processed/predictive_maintenance_processed.csv"
+reference_data = pd.read_csv(reference_path)
+
 app = FastAPI()
 
-# Define the input schema for the /predict endpoint
+# Define input schema
 class ModelInput(BaseModel):
     UDI: int
     Air_temperature_K: float
@@ -32,116 +29,130 @@ class ModelInput(BaseModel):
     Tool_wear_min: int
     Type_encoded: int
     Product_ID_encoded: int
-    Failure_Type_encoded: int
+    Failure_Type_encoded: int  # Ensure this feature is included
 
+# 🚀 Predict Endpoint (Maintains Existing Functionality)
 @app.post("/predict")
-def predict_endpoint(data: List[ModelInput]):
-    """Make predictions and log results to MLflow."""
+async def predict_endpoint(input_data: List[ModelInput]):
+    input_features = pd.DataFrame([data.dict() for data in input_data])
 
-    try:
-        # Load the trained model (champion model from MLflow)
-        model = load_model()
+    with mlflow.start_run():
+        # ✅ Log input parameters
+        for col in input_features.columns:
+            mlflow.log_param(col, input_features.iloc[0][col])  
 
-        # Convert input data to Pandas DataFrame
-        input_df = pd.DataFrame([item.dict() for item in data])
+        # ✅ Log Model Hyperparameters
+        mlflow.log_param("model_type", "XGBoost")
+        mlflow.log_param("learning_rate", 0.1)
+        mlflow.log_param("max_depth", 5)
+        mlflow.log_param("n_estimators", 50)
 
-        # Make predictions
-        predictions = model.predict(input_df)
+        # ✅ Make Predictions
+        predictions = model.predict(input_features)
 
-        # Log input features & predictions to MLflow
-        with mlflow.start_run():
-            mlflow.log_params(data[0].dict())  # Log first input’s features
-            mlflow.log_metric("prediction", predictions[0])  # Log first prediction
+        # ✅ Log Predictions
+        mlflow.log_metric("prediction", predictions[0])
 
-        return {"predictions": predictions.tolist()}
+        # ✅ Calculate & Log Metrics (Dummy True Labels for Now)
+        true_labels = [0] * len(predictions)  # Replace with actual labels if available
+        f1 = f1_score(true_labels, predictions, average="macro")
+        acc = accuracy_score(true_labels, predictions)
+        precision = precision_score(true_labels, predictions, average="macro", zero_division=1)
+        recall = recall_score(true_labels, predictions, average="macro", zero_division=1)
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error occurred: {str(e)}")
+        mlflow.log_metric("f1_score", f1)
+        mlflow.log_metric("accuracy", acc)
+        mlflow.log_metric("precision", precision)
+        mlflow.log_metric("recall", recall)
 
-@app.get("/model")
-def model_info():
-    """Retrieve information about the currently deployed model."""
-    try:
-        # Load the model
-        model = load_model()
+    return {"predictions": predictions.tolist()}
 
-        # Retrieve hyperparameters (assuming these are logged during model training)
-        hyperparameters = {
-            "learning_rate": model.get_params()["learning_rate"],
-            "max_depth": model.get_params()["max_depth"],
-            "n_estimators": model.get_params()["n_estimators"]
-        }
+# 🔥 Drift Detection Endpoint (Separate from Prediction)
+@app.post("/drift")
+async def drift_endpoint(input_data: List[ModelInput]):
+    input_features = pd.DataFrame([data.dict() for data in input_data])
 
-        # Example input data for SHAP
-        sample_input = {
-            "UDI": 12345,
-            "Air_temperature_K": 300.0,
-            "Process_temperature_K": 290.0,
-            "Rotational_speed_rpm": 1500,
-            "Torque_Nm": 30.0,
-            "Tool_wear_min": 25,
-            "Type_encoded": 1,
-            "Product_ID_encoded": 10,
-            "Failure_Type_encoded": 3
-        }
+    with mlflow.start_run():
+        # ✅ Run Drift Detection
+        drift_report = Report(metrics=[DataDriftPreset()])
+        drift_report.run(reference_data=reference_data, current_data=input_features)
+        drift_results = drift_report.as_dict()
 
-        input_df = pd.DataFrame([sample_input])
+        # Extract drift information
+        drift_detected = drift_results["metrics"][0]["result"]["dataset_drift"]
+        drift_score = drift_results["metrics"][0]["result"]["share_drifted_features"]
 
-        # SHAP explanation
-        explainer = shap.Explainer(model)
-        shap_values = explainer(input_df)
+        # ✅ Log Drift Metrics to MLflow
+        mlflow.log_metric("drift_detected", int(drift_detected))
+        mlflow.log_metric("drift_score", drift_score)
 
-        # Get important features
-        important_features = [f"{feat} ({round(val, 3)})" for feat, val in zip(input_df.columns, shap_values.mean(0))]
+        # ✅ Log Feature-Specific Drift
+        drifted_features = []
+        for feature, details in drift_results["metrics"][0]["result"]["drift_by_columns"].items():
+            if details["drift_detected"]:
+                drifted_features.append(feature)
+                mlflow.log_metric(f"{feature}_drift", 1)  # Log 1 if drift detected
 
-        # Return model information
-        return {
-            "model_hyperparameters": hyperparameters,
-            "important_features": important_features,
-            "input_schema": ModelInput.schema()
-        }
+    return {
+        "drift_detected": drift_detected,
+        "drift_score": drift_score,
+        "drifted_features": drifted_features
+    }
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error occurred: {str(e)}")
+# ✅ Combined Predict + Drift (Optional, if you want both in one call)
+@app.post("/predict_and_drift")
+async def predict_and_drift(input_data: List[ModelInput]):
+    input_features = pd.DataFrame([data.dict() for data in input_data])
 
-def get_best_model():
-    """Fetch the best model from MLflow based on the highest F1 score."""
-    client = mlflow.tracking.MlflowClient()
-    
-    # Search for the best run in the "Predictive Maintenance" experiment
-    experiment = client.get_experiment_by_name("Predictive Maintenance")
-    
-    if not experiment:
-        print("Experiment not found. Train a model first!")
-        return None
+    with mlflow.start_run():
+        # ✅ Log input parameters
+        for col in input_features.columns:
+            mlflow.log_param(col, input_features.iloc[0][col])  
 
-    runs = client.search_runs(experiment_ids=[experiment.experiment_id], order_by=["metrics.f1_score DESC"])
+        # ✅ Log Model Hyperparameters
+        mlflow.log_param("model_type", "XGBoost")
+        mlflow.log_param("learning_rate", 0.1)
+        mlflow.log_param("max_depth", 5)
+        mlflow.log_param("n_estimators", 50)
 
-    if runs:
-        best_run = runs[0]
-        best_model_uri = best_run.info.artifact_uri + "/model"
-        print(f"Champion Model Found: {best_model_uri}")
-        return best_model_uri
-    else:
-        print("No trained models found.")
-        return None
+        # ✅ Make Predictions
+        predictions = model.predict(input_features)
 
-@app.get("/")
-def read_root():
-    return {"message": "FastAPI is running"}
+        # ✅ Log Predictions
+        mlflow.log_metric("prediction", predictions[0])
 
-@app.get("/mlflow_test")
-def test_mlflow():
-    try:
-        # Set MLflow tracking URI
-        mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+        # ✅ Calculate & Log Metrics (Dummy True Labels for Now)
+        true_labels = [0] * len(predictions)  # Replace with actual labels if available
+        f1 = f1_score(true_labels, predictions, average="macro")
+        acc = accuracy_score(true_labels, predictions)
+        precision = precision_score(true_labels, predictions, average="macro", zero_division=1)
+        recall = recall_score(true_labels, predictions, average="macro", zero_division=1)
 
-        # Try logging a dummy parameter and metric to MLflow to see if it's working
-        with mlflow.start_run():
-            mlflow.log_param("param1", "value1")
-            mlflow.log_metric("metric1", 0.1)
-        
-        return {"message": "MLflow is connected and working"}
-    
-    except Exception as e:
-        return {"error": f"Error in MLflow: {str(e)}"}
+        mlflow.log_metric("f1_score", f1)
+        mlflow.log_metric("accuracy", acc)
+        mlflow.log_metric("precision", precision)
+        mlflow.log_metric("recall", recall)
+
+        # ✅ Run Drift Detection after Prediction
+        drift_report = Report(metrics=[DataDriftPreset()])
+        drift_report.run(reference_data=reference_data, current_data=input_features)
+        drift_results = drift_report.as_dict()
+
+        drift_detected = drift_results["metrics"][0]["result"]["dataset_drift"]
+        drift_score = drift_results["metrics"][0]["result"]["share_drifted_features"]
+
+        mlflow.log_metric("drift_detected", int(drift_detected))
+        mlflow.log_metric("drift_score", drift_score)
+
+        drifted_features = []
+        for feature, details in drift_results["metrics"][0]["result"]["drift_by_columns"].items():
+            if details["drift_detected"]:
+                drifted_features.append(feature)
+                mlflow.log_metric(f"{feature}_drift", 1)
+
+    return {
+        "predictions": predictions.tolist(),
+        "drift_detected": drift_detected,
+        "drift_score": drift_score,
+        "drifted_features": drifted_features
+    }

@@ -1,0 +1,20 @@
+service:
+  datasets_path: "data/processed/predictive_maintenance_processed.csv"  # Reference data path
+  use_reference: true  # Use reference dataset for drift detection
+  moving_reference: false  # Set to true if reference updates over time
+  window_size: 100  # Number of latest records used for drift detection
+  calculation_period_sec: 60  # Run drift detection every 60 seconds
+
+datasets:
+  predictive_maintenance:
+    monitors:
+      - data_drift
+    column_mapping:
+      numerical_features: 
+        - Air_temperature_K
+        - Process_temperature_K
+        - Rotational_speed_rpm
+        - Torque_Nm
+        - Tool_wear_min
+        - Type_encoded
+        - Product_ID_encoded

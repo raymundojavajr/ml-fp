@@ -8,8 +8,6 @@ evidently
 matplotlib
 scikit-learn
 requests
-shap
 pydantic
-python-dotenv
-pydantic
-numpy==1.26
+prometheus_client
+pyyaml

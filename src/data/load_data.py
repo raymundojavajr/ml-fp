@@ -3,19 +3,14 @@
 from pathlib import Path
 import pandas as pd
 
+
 def find_root(marker="README.md"):
     """Find project root using marker file."""
-    # Skip searching for README.md if you're in the Docker container
-    try:
-        current_dir = Path.cwd()
-        for parent in [current_dir] + list(current_dir.parents):
-            if (parent / marker).exists():
-                return parent
-        # If README.md isn't found, you can fallback to the /app directory
-        print("README.md not found. Using /app as the root directory.")
-        return Path('/app')  # Specify the working directory for your container here
-    except Exception as e:
-        raise FileNotFoundError(f"Error locating root directory: {str(e)}")
+    current_dir = Path.cwd()
+    for parent in [current_dir] + list(current_dir.parents):
+        if (parent / marker).exists():
+            return parent
+    raise FileNotFoundError(f"Marker file {marker} not found in any parent directory of {current_dir}")
 
 
 def load_data(find_relative_path="data/raw/predictive_maintenance.csv"):
