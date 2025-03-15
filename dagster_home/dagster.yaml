@@ -1,0 +1,21 @@
+# dagster_home/dagster.yaml
+
+# Turn off telemetry if you prefer not to send usage stats
+telemetry:
+  enabled: false
+
+# Use the default run coordinator (which generally starts runs immediately)
+run_coordinator:
+  module: dagster._core.run_coordinator
+  class: DefaultRunCoordinator
+
+# Use the default run launcher (in-process or local process)
+run_launcher:
+  module: dagster._core.launcher.default_run_launcher
+  class: DefaultRunLauncher
+
+# Example: If you want the multiprocess executor to have limited concurrency, you can set:
+# Note: This is optional; it can help if your machine is resource-constrained.
+# execution:
+#   multiprocess:
+#     max_concurrent: 2

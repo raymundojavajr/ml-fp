@@ -1,0 +1,10 @@
+2025-03-13 15:26:04 +0000 - dagster - DEBUG - ml_pipeline_job - e743f9c8-44e9-4e35-b3de-6617e6b9609f - 3762 - LOGS_CAPTURED - Started capturing logs in process (pid: 3762).
+2025-03-13 15:26:04 +0000 - dagster - DEBUG - ml_pipeline_job - e743f9c8-44e9-4e35-b3de-6617e6b9609f - 3762 - train_model_op - STEP_START - Started execution of step "train_model_op".
+2025-03-13 15:26:04 +0000 - dagster - DEBUG - ml_pipeline_job - e743f9c8-44e9-4e35-b3de-6617e6b9609f - train_model_op - Loading file from: /dagster_home/storage/e743f9c8-44e9-4e35-b3de-6617e6b9609f/split_data_op/result using PickledObjectFilesystemIOManager...
+2025-03-13 15:26:04 +0000 - dagster - DEBUG - ml_pipeline_job - e743f9c8-44e9-4e35-b3de-6617e6b9609f - 3762 - train_model_op - LOADED_INPUT - Loaded input "split_data" using input manager "io_manager", from output "result" of step "split_data_op"
+2025-03-13 15:26:04 +0000 - dagster - DEBUG - ml_pipeline_job - e743f9c8-44e9-4e35-b3de-6617e6b9609f - 3762 - train_model_op - STEP_INPUT - Got input "split_data" of type "Any". (Type check passed).
+2025-03-13 15:26:04 +0000 - dagster - INFO - ml_pipeline_job - e743f9c8-44e9-4e35-b3de-6617e6b9609f - train_model_op - Training model...
+2025-03-13 15:26:04 +0000 - dagster - DEBUG - ml_pipeline_job - e743f9c8-44e9-4e35-b3de-6617e6b9609f - 3762 - train_model_op - STEP_OUTPUT - Yielded output "result" of type "Any". (Type check passed).
+2025-03-13 15:26:05 +0000 - dagster - DEBUG - ml_pipeline_job - e743f9c8-44e9-4e35-b3de-6617e6b9609f - train_model_op - Writing file at: /dagster_home/storage/e743f9c8-44e9-4e35-b3de-6617e6b9609f/train_model_op/result using PickledObjectFilesystemIOManager...
+2025-03-13 15:26:05 +0000 - dagster - DEBUG - ml_pipeline_job - e743f9c8-44e9-4e35-b3de-6617e6b9609f - 3762 - train_model_op - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+2025-03-13 15:26:05 +0000 - dagster - DEBUG - ml_pipeline_job - e743f9c8-44e9-4e35-b3de-6617e6b9609f - 3762 - train_model_op - STEP_SUCCESS - Finished execution of step "train_model_op" in 1.02s.

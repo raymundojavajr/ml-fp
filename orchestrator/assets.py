@@ -1,3 +1,4 @@
+# orchestrator/assets.py
 
 import pandas as pd
 from dagster import asset, AssetMaterialization, Output, AssetIn
@@ -10,7 +11,7 @@ from src.data.process_data import (
     save_processed_data,
 )
 from src.data.split_data import split_data
-from src.models.train_model import train_model  # Only need this import
+from src.models.train_model import train_model, save_model
 from src.models.predict_model import predict
 from src.models.evaluate_model import evaluate
 

@@ -1,4 +1,4 @@
-UDI,Air_temper,Process_te,Rotational,Torque_Nr,Tool_wear,Target,Type_enco,Product_ID,Failure_Type_encoded
+UDI,Air_temperature_K,Process_temperature_K,Rotational_speed_rpm,Torque_Nm,Tool_wear_min,Target,Type_encoded,Product_ID_encoded,Failure_Type_encoded
 1,298.7490802376947,308.3702658576772,1619,38.35477116764095,12,0,2,1006,1
 2,299.9014286128198,309.08380189475673,1790,29.465940565249227,42,1,2,1004,1
 3,299.4639878836228,309.7458916717528,1562,49.49189359850171,20,1,1,1003,0

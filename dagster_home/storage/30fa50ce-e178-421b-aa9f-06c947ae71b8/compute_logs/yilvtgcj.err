@@ -1,0 +1,7 @@
+2025-03-11 09:27:13 +0000 - dagster - DEBUG - ml_pipeline_job - 30fa50ce-e178-421b-aa9f-06c947ae71b8 - 45002 - LOGS_CAPTURED - Started capturing logs in process (pid: 45002).
+2025-03-11 09:27:13 +0000 - dagster - DEBUG - ml_pipeline_job - 30fa50ce-e178-421b-aa9f-06c947ae71b8 - 45002 - load_and_preprocess_op - STEP_START - Started execution of step "load_and_preprocess_op".
+2025-03-11 09:27:13 +0000 - dagster - INFO - ml_pipeline_job - 30fa50ce-e178-421b-aa9f-06c947ae71b8 - load_and_preprocess_op - Loading and preprocessing data...
+2025-03-11 09:27:14 +0000 - dagster - DEBUG - ml_pipeline_job - 30fa50ce-e178-421b-aa9f-06c947ae71b8 - 45002 - load_and_preprocess_op - STEP_OUTPUT - Yielded output "result" of type "Any". (Type check passed).
+2025-03-11 09:27:14 +0000 - dagster - DEBUG - ml_pipeline_job - 30fa50ce-e178-421b-aa9f-06c947ae71b8 - load_and_preprocess_op - Writing file at: /dagster_home/storage/30fa50ce-e178-421b-aa9f-06c947ae71b8/load_and_preprocess_op/result using PickledObjectFilesystemIOManager...
+2025-03-11 09:27:14 +0000 - dagster - DEBUG - ml_pipeline_job - 30fa50ce-e178-421b-aa9f-06c947ae71b8 - 45002 - load_and_preprocess_op - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+2025-03-11 09:27:14 +0000 - dagster - DEBUG - ml_pipeline_job - 30fa50ce-e178-421b-aa9f-06c947ae71b8 - 45002 - load_and_preprocess_op - STEP_SUCCESS - Finished execution of step "load_and_preprocess_op" in 261ms.
