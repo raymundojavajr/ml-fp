@@ -1,14 +1,30 @@
-import mlflow
+# import joblib
 
-# Set MLflow tracking URI
-mlflow.set_tracking_uri("http://localhost:5000")
+# # Define the model path
+# model_path = "src/models/trained_model.pkl"
 
-# Check connection
-try:
-    client = mlflow.tracking.MlflowClient()
-    experiments = client.search_experiments()  # ✅ Use this instead of list_experiments()
-    print("✅ MLflow is reachable!")
-    for exp in experiments:
-        print(f"Experiment: {exp.name} (ID: {exp.experiment_id})")
-except Exception as e:
-    print(f"❌ Error connecting to MLflow: {e}")
+# # Load the model
+# model = joblib.load(model_path)
+# print("\nModel loaded successfully")
+# print(f"Model Type: {type(model)}")
+
+# # Retrieve Model Hyperparameters
+# params = model.get_xgb_params()
+# print("\n===== Model Hyperparameters =====")
+# for param, value in params.items():
+#     print(f"  {param}: {value}")
+
+# # Retrieve Feature Importance
+# if hasattr(model, "feature_importances_") and hasattr(model, "feature_names_in_"):
+#     feature_importance = {feature: importance for feature, importance in zip(model.feature_names_in_, model.feature_importances_)}
+#     print("\n===== Feature Importances =====")
+#     for feature, importance in feature_importance.items():
+#         print(f"  {feature}: {importance:.4f}")
+# else:
+#     print("\nFeature importance is not available.")
+
+# # Verify Model Training
+# if hasattr(model, "n_features_in_"):
+#     print(f"\nModel trained on {model.n_features_in_} features")
+# else:
+#     print("\nModel might not be properly trained")
