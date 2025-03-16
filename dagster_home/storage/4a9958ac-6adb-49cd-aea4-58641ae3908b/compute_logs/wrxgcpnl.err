@@ -1,0 +1,10 @@
+2025-03-11 23:09:32 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - 1219 - LOGS_CAPTURED - Started capturing logs in process (pid: 1219).
+2025-03-11 23:09:32 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - 1219 - split_data_op - STEP_START - Started execution of step "split_data_op".
+2025-03-11 23:09:32 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - split_data_op - Loading file from: /dagster_home/storage/4a9958ac-6adb-49cd-aea4-58641ae3908b/prepare_training_op/result using PickledObjectFilesystemIOManager...
+2025-03-11 23:09:32 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - 1219 - split_data_op - LOADED_INPUT - Loaded input "df" using input manager "io_manager", from output "result" of step "prepare_training_op"
+2025-03-11 23:09:32 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - 1219 - split_data_op - STEP_INPUT - Got input "df" of type "Any". (Type check passed).
+2025-03-11 23:09:32 +0000 - dagster - INFO - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - split_data_op - Splitting data...
+2025-03-11 23:09:32 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - 1219 - split_data_op - STEP_OUTPUT - Yielded output "result" of type "Any". (Type check passed).
+2025-03-11 23:09:32 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - split_data_op - Writing file at: /dagster_home/storage/4a9958ac-6adb-49cd-aea4-58641ae3908b/split_data_op/result using PickledObjectFilesystemIOManager...
+2025-03-11 23:09:32 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - 1219 - split_data_op - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+2025-03-11 23:09:32 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - 1219 - split_data_op - STEP_SUCCESS - Finished execution of step "split_data_op" in 276ms.

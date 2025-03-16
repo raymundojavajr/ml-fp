@@ -1,0 +1,11 @@
+2025-03-11 23:00:52 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 1487 - LOGS_CAPTURED - Started capturing logs in process (pid: 1487).
+2025-03-11 23:00:52 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 1487 - predict_model_op - STEP_START - Started execution of step "predict_model_op".
+2025-03-11 23:00:52 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - predict_model_op - Loading file from: /dagster_home/storage/e92ee909-a989-4a41-b699-423dba49a9d7/train_model_op/result using PickledObjectFilesystemIOManager...
+2025-03-11 23:00:53 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 1487 - predict_model_op - LOADED_INPUT - Loaded input "model_tuple" using input manager "io_manager", from output "result" of step "train_model_op"
+2025-03-11 23:00:53 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 1487 - predict_model_op - STEP_INPUT - Got input "model_tuple" of type "Any". (Type check passed).
+2025-03-11 23:00:53 +0000 - dagster - INFO - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - predict_model_op - Generating predictions...
+2025-03-11 23:00:53 +0000 - dagster - INFO - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - predict_model_op - Predictions generated: [0 0 0 0 0 0 0 0 0 0]
+2025-03-11 23:00:53 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 1487 - predict_model_op - STEP_OUTPUT - Yielded output "result" of type "Any". (Type check passed).
+2025-03-11 23:00:53 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - predict_model_op - Writing file at: /dagster_home/storage/e92ee909-a989-4a41-b699-423dba49a9d7/predict_model_op/result using PickledObjectFilesystemIOManager...
+2025-03-11 23:00:53 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 1487 - predict_model_op - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+2025-03-11 23:00:53 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 1487 - predict_model_op - STEP_SUCCESS - Finished execution of step "predict_model_op" in 463ms.

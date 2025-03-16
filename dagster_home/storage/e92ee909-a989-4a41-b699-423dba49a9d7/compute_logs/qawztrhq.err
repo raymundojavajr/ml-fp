@@ -1,0 +1,10 @@
+2025-03-11 23:00:40 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 1089 - LOGS_CAPTURED - Started capturing logs in process (pid: 1089).
+2025-03-11 23:00:40 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 1089 - prepare_training_op - STEP_START - Started execution of step "prepare_training_op".
+2025-03-11 23:00:40 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - prepare_training_op - Loading file from: /dagster_home/storage/e92ee909-a989-4a41-b699-423dba49a9d7/load_and_preprocess_op/result using PickledObjectFilesystemIOManager...
+2025-03-11 23:00:40 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 1089 - prepare_training_op - LOADED_INPUT - Loaded input "df" using input manager "io_manager", from output "result" of step "load_and_preprocess_op"
+2025-03-11 23:00:40 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 1089 - prepare_training_op - STEP_INPUT - Got input "df" of type "Any". (Type check passed).
+2025-03-11 23:00:40 +0000 - dagster - INFO - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - prepare_training_op - Preparing features and target...
+2025-03-11 23:00:40 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 1089 - prepare_training_op - STEP_OUTPUT - Yielded output "result" of type "Any". (Type check passed).
+2025-03-11 23:00:40 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - prepare_training_op - Writing file at: /dagster_home/storage/e92ee909-a989-4a41-b699-423dba49a9d7/prepare_training_op/result using PickledObjectFilesystemIOManager...
+2025-03-11 23:00:40 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 1089 - prepare_training_op - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+2025-03-11 23:00:40 +0000 - dagster - DEBUG - ml_pipeline_job - e92ee909-a989-4a41-b699-423dba49a9d7 - 1089 - prepare_training_op - STEP_SUCCESS - Finished execution of step "prepare_training_op" in 274ms.

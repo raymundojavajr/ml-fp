@@ -70,16 +70,16 @@ A modular machine learning pipeline for predictive maintenance using XGBoost. Th
 
 Dagster is used to orchestrate and monitor your ML pipeline. The Dagster setup in this project includes:
 
-- **Asset Definitions:**  
+- **Asset Definitions:**
   Located in `dagster/assets.py`, assets such as `processed_data_asset`, `trained_model_asset`, `predictions_asset`, and `evaluation_metrics_asset` provide data lineage.
 
-- **Job Pipeline:**  
+- **Job Pipeline:**
   The traditional op-based pipeline is defined in `dagster/jobs.py` as `ml_pipeline_job`.
 
-- **Definitions Registration:**  
+- **Definitions Registration:**
   Both assets and the job are registered in `dagster/definitions.py`.
 
-- **Workspace Configuration:**  
+- **Workspace Configuration:**
   The `workspace.yaml` file in the project root points Dagster to load definitions from `orchestrator.definitions` (or `dagster/definitions.py` if you haven't renamed the folder). For example:
   ```yaml
   load_from:

@@ -1,0 +1,12 @@
+2025-03-11 23:09:40 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - 1512 - LOGS_CAPTURED - Started capturing logs in process (pid: 1512).
+2025-03-11 23:09:40 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - 1512 - evaluate_model_op - STEP_START - Started execution of step "evaluate_model_op".
+2025-03-11 23:09:40 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - evaluate_model_op - Loading file from: /dagster_home/storage/4a9958ac-6adb-49cd-aea4-58641ae3908b/train_model_op/result using PickledObjectFilesystemIOManager...
+2025-03-11 23:09:40 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - 1512 - evaluate_model_op - LOADED_INPUT - Loaded input "model_tuple" using input manager "io_manager", from output "result" of step "train_model_op"
+2025-03-11 23:09:40 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - 1512 - evaluate_model_op - STEP_INPUT - Got input "model_tuple" of type "Any". (Type check passed).
+2025-03-11 23:09:40,971 - INFO - F1 Score: 0.9516
+2025-03-11 23:09:40,972 - INFO - Accuracy: 0.9970
+2025-03-11 23:09:41 +0000 - dagster - INFO - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - evaluate_model_op - Evaluation complete: F1 Score = 0.9516, Accuracy = 0.9970
+2025-03-11 23:09:41 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - 1512 - evaluate_model_op - STEP_OUTPUT - Yielded output "result" of type "Any". (Type check passed).
+2025-03-11 23:09:41 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - evaluate_model_op - Writing file at: /dagster_home/storage/4a9958ac-6adb-49cd-aea4-58641ae3908b/evaluate_model_op/result using PickledObjectFilesystemIOManager...
+2025-03-11 23:09:41 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - 1512 - evaluate_model_op - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+2025-03-11 23:09:41 +0000 - dagster - DEBUG - ml_pipeline_job - 4a9958ac-6adb-49cd-aea4-58641ae3908b - 1512 - evaluate_model_op - STEP_SUCCESS - Finished execution of step "evaluate_model_op" in 388ms.
