@@ -1,22 +1,28 @@
-# import requests
+import requests
+import pandas as pd
 
-# url = "http://127.0.0.1:8000/predict"
-# data = [
-#     {
-#         "UDI": 2,
-#         "Air_temperature_K": 310.5,
-#         "Process_temperature_K": 320.1,
-#         "Rotational_speed_rpm": 2000,
-#         "Torque_Nm": 50.5,
-#         "Tool_wear_min": 10,
-#         "Type_encoded": 1,
-#         "Product_ID_encoded": 8005,
-#         "Failure_Type_encoded": 0
-#     }
-# ]
+# ✅ Load test data
+csv_path = "data/processed/synthetic_data.csv"
+test_df = pd.read_csv(csv_path)
+json_data = test_df.to_dict(orient="records")
 
+# ✅ Define FastAPI Endpoints
+predict_url = "http://localhost:8000/predict"
+drift_url = "http://localhost:8085/drift"
 
-# response = requests.post(url, json=data)
+# ✅ Send Prediction Request
+predict_response = requests.post(predict_url, json=json_data)
+print("\n===== Prediction Response =====")
+print("Status Code:", predict_response.status_code)
+print("Response:", predict_response.json())
 
-# print("Status Code:", response.status_code)
-# print("Response:", response.json())
+# ✅ Send Drift Detection Request
+drift_response = requests.post(drift_url, json=json_data)
+print("\n===== Drift Detection Response =====")
+print("Status Code:", drift_response.status_code)
+
+# ✅ Print Response Safely
+try:
+    print("Response:", drift_response.json())
+except requests.exceptions.JSONDecodeError:
+    print("Drift Monitoring Service returned invalid response.")
