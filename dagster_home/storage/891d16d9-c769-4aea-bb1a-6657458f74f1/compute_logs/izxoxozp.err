@@ -1,0 +1,10 @@
+2025-03-13 04:44:21 +0000 - dagster - DEBUG - ml_pipeline_job - 891d16d9-c769-4aea-bb1a-6657458f74f1 - 264 - LOGS_CAPTURED - Started capturing logs in process (pid: 264).
+2025-03-13 04:44:21 +0000 - dagster - DEBUG - ml_pipeline_job - 891d16d9-c769-4aea-bb1a-6657458f74f1 - 264 - prepare_training_op - STEP_START - Started execution of step "prepare_training_op".
+2025-03-13 04:44:21 +0000 - dagster - DEBUG - ml_pipeline_job - 891d16d9-c769-4aea-bb1a-6657458f74f1 - prepare_training_op - Loading file from: /dagster_home/storage/891d16d9-c769-4aea-bb1a-6657458f74f1/load_and_preprocess_op/result using PickledObjectFilesystemIOManager...
+2025-03-13 04:44:22 +0000 - dagster - DEBUG - ml_pipeline_job - 891d16d9-c769-4aea-bb1a-6657458f74f1 - 264 - prepare_training_op - LOADED_INPUT - Loaded input "df" using input manager "io_manager", from output "result" of step "load_and_preprocess_op"
+2025-03-13 04:44:22 +0000 - dagster - DEBUG - ml_pipeline_job - 891d16d9-c769-4aea-bb1a-6657458f74f1 - 264 - prepare_training_op - STEP_INPUT - Got input "df" of type "Any". (Type check passed).
+2025-03-13 04:44:22 +0000 - dagster - INFO - ml_pipeline_job - 891d16d9-c769-4aea-bb1a-6657458f74f1 - prepare_training_op - Preparing features and target...
+2025-03-13 04:44:22 +0000 - dagster - DEBUG - ml_pipeline_job - 891d16d9-c769-4aea-bb1a-6657458f74f1 - 264 - prepare_training_op - STEP_OUTPUT - Yielded output "result" of type "Any". (Type check passed).
+2025-03-13 04:44:22 +0000 - dagster - DEBUG - ml_pipeline_job - 891d16d9-c769-4aea-bb1a-6657458f74f1 - prepare_training_op - Writing file at: /dagster_home/storage/891d16d9-c769-4aea-bb1a-6657458f74f1/prepare_training_op/result using PickledObjectFilesystemIOManager...
+2025-03-13 04:44:22 +0000 - dagster - DEBUG - ml_pipeline_job - 891d16d9-c769-4aea-bb1a-6657458f74f1 - 264 - prepare_training_op - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+2025-03-13 04:44:22 +0000 - dagster - DEBUG - ml_pipeline_job - 891d16d9-c769-4aea-bb1a-6657458f74f1 - 264 - prepare_training_op - STEP_SUCCESS - Finished execution of step "prepare_training_op" in 451ms.
