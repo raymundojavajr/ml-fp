@@ -28,17 +28,17 @@ def predict(model, X):
 def main():
     root = find_root()
     model_path = root / "src" / "models" / "trained_model.pkl"
-
+    
     # Load the saved model
     model = load_model(model_path)
-
+    
     # Load processed data and clean feature names
     df = load_processed_data()
     df = clean_feature_names(df)
-
+    
     # Prepare features (assume target column is "Target" and drop it)
     X = df.drop(columns=["Target"])
-
+    
     # Generate predictions
     predictions = predict(model, X)
     print("Predictions preview:")

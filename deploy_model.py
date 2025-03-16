@@ -1,27 +1,28 @@
+import os
+import json
 import pickle
 import pandas as pd
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import List
 import mlflow
-import shap
-import joblib
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, ValidationError
+from typing import List, Dict
+from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score
 
-# Load the "champion" model from MLflow
-def load_model():
-    """Load the champion model from MLflow."""
-    client = mlflow.tracking.MlflowClient()
-    # Retrieve the best model URI from MLflow
-    best_model_uri = get_best_model()
-    if best_model_uri is None:
-        raise HTTPException(status_code=500, detail="Champion model not found in MLflow")
-    model = mlflow.xgboost.load_model(best_model_uri)
-    return model
+# Load the trained model
+model_path = "src/models/trained_model.pkl"
 
-# FastAPI App Initialization
+try:
+    with open(model_path, "rb") as f:
+        model = pickle.load(f)
+except Exception as e:
+    raise HTTPException(status_code=500, detail=f"Error loading model: {str(e)}")
+
+# Load reference dataset for drift detection
+reference_path = "data/processed/predictive_maintenance_processed.csv"
+reference_data = pd.read_csv(reference_path)
+
 app = FastAPI()
 
-# Define the input schema for the /predict endpoint
 class ModelInput(BaseModel):
     UDI: int
     Air_temperature_K: float
@@ -34,94 +35,77 @@ class ModelInput(BaseModel):
     Failure_Type_encoded: int
 
 @app.post("/predict")
-def predict_endpoint(data: List[ModelInput]):
-<<<<<<< HEAD
-    """Serve predictions and log results to MLflow."""
+async def predict_endpoint(input_data: List[ModelInput]):
     try:
-        # Load the trained model (champion model from MLflow)
-        model = load_model()
-=======
-    """Make predictions and log results to MLflow."""
+        input_features = pd.DataFrame([data.dict() for data in input_data])
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid input data: {e.json()}")
 
-    # Convert input data to Pandas DataFrame
-    input_df = pd.DataFrame([item.dict() for item in data])
+    with mlflow.start_run():
+        for col in input_features.columns:
+            mlflow.log_param(col, input_features.iloc[0][col])  
 
-    # Make predictions
-    predictions = model.predict(input_df)
->>>>>>> 0ddf4bcb82b4c6e0d1efd18c25bfb43b5b741ee9
+        mlflow.log_param("model_type", "XGBoost")
+        mlflow.log_param("learning_rate", 0.1)
+        mlflow.log_param("max_depth", 5)
+        mlflow.log_param("n_estimators", 50)
 
-        # Convert input data to Pandas DataFrame
-        input_df = pd.DataFrame([item.dict() for item in data])
+        try:
+            predictions = model.predict(input_features)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Model prediction error: {str(e)}")
 
-<<<<<<< HEAD
-        # Preprocess input data (ensure consistency with training pipeline)
-        # If you have any feature engineering or transformation, apply here
+        mlflow.log_metric("prediction", predictions[0])
 
-        # Make predictions
-        predictions = model.predict(input_df)
+        true_labels = [0] * len(predictions)
+        f1 = f1_score(true_labels, predictions, average="macro")
+        acc = accuracy_score(true_labels, predictions)
+        precision = precision_score(true_labels, predictions, average="macro", zero_division=1)
+        recall = recall_score(true_labels, predictions, average="macro", zero_division=1)
 
-        # Log input features & predictions to MLflow
-        with mlflow.start_run():
-            mlflow.log_params(data[0].dict())  # Log first input’s features
-            mlflow.log_metric("prediction", predictions[0])  # Log first prediction
+        mlflow.log_metric("f1_score", f1)
+        mlflow.log_metric("accuracy", acc)
+        mlflow.log_metric("precision", precision)
+        mlflow.log_metric("recall", recall)
 
-        return {"predictions": predictions.tolist()}
+    return {"predictions": predictions.tolist()}
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error occurred: {str(e)}")
+
+def convert_numpy_types(obj):
+    """Converts NumPy data types to native Python types for JSON serialization."""
+    if isinstance(obj, (np.float32, np.float64)):
+        return float(obj)
+    if isinstance(obj, (np.int32, np.int64)):
+        return int(obj)
+    return obj
 
 @app.get("/model")
-def model_info():
-    """Retrieve information about the currently deployed model."""
-    try:
-        # Load the model
-        model = load_model()
+async def get_model_info():
+    if model is None:
+        raise HTTPException(status_code=500, detail=error_message)
 
-        # Retrieve hyperparameters (assuming these are logged during model training)
+    try:
+        # Load model hyperparameters
         hyperparameters = {
-            "learning_rate": model.get_params()["learning_rate"],
-            "max_depth": model.get_params()["max_depth"],
-            "n_estimators": model.get_params()["n_estimators"]
+            "model_type": "XGBoost",
+            "learning_rate": 0.1,
+            "max_depth": 5,
+            "n_estimators": 100,
         }
 
-        # Get important features (using SHAP to retrieve feature importance)
-        # Generate SHAP plot and use top features
-        input_df = pd.DataFrame([item.dict() for item in ModelInput.schema_.get('properties').keys()])
-        explainer = shap.Explainer(model)
-        shap_values = explainer(input_df)
-        important_features = [f"{feat} ({round(val, 3)})" for feat, val in zip(input_df.columns, shap_values.mean(0))]
+        # Feature Importance (Ensure model has this attribute)
+        if hasattr(model, "feature_importances_"):
+            feature_importance = {
+                f"Feature_{idx}": convert_numpy_types(importance)
+                for idx, importance in enumerate(model.feature_importances_)
+            }
+        else:
+            feature_importance = {}
 
-        # Return model information
         return {
             "model_hyperparameters": hyperparameters,
-            "important_features": important_features,
-            "input_schema": ModelInput.schema()
+            "important_features": feature_importance,
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error occurred: {str(e)}")
-
-def get_best_model():
-    """Fetch the best model from MLflow based on the highest F1 score."""
-    client = mlflow.tracking.MlflowClient()
-    
-    # Search for the best run in the "Predictive Maintenance" experiment
-    experiment = client.get_experiment_by_name("Predictive Maintenance")
-    
-    if not experiment:
-        print("Experiment not found. Train a model first!")
-        return None
-
-    runs = client.search_runs(experiment_ids=[experiment.experiment_id], order_by=["metrics.f1_score DESC"])
-
-    if runs:
-        best_run = runs[0]
-        best_model_uri = best_run.info.artifact_uri + "/model"
-        print(f"Champion Model Found: {best_model_uri}")
-        return best_model_uri
-    else:
-        print("No trained models found.")
-        return None
-=======
-    return {"predictions": predictions.tolist()}
->>>>>>> 0ddf4bcb82b4c6e0d1efd18c25bfb43b5b741ee9
+        raise HTTPException(status_code=500, detail=f"Error retrieving model info: {e}")

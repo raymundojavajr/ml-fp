@@ -1,4 +1,3 @@
-version: "3.8"
 
 services:
   fastapi_app:
@@ -14,9 +13,27 @@ services:
     depends_on:
       - db
       - mlflow_service
+      - drift_monitoring_service  # Ensure FastAPI starts only after drift monitoring is up
     volumes:
       - .:/app
     command: uvicorn deploy_model:app --host 0.0.0.0 --port 8000
+
+  drift_monitoring_service:
+    build:
+      context: .
+      dockerfile: Dockerfile.drift_monitoring
+    container_name: drift_monitoring_service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - db
+      - mlflow_service
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow_service:5000
+      - DATA_PATH=/app/data/processed/predictive_maintenance_processed.csv
+    volumes:
+      - .:/app
+    command: uvicorn src.monitoring.drift_monitoring:app --host 0.0.0.0 --port 8085 --reload
 
   mlflow_service:
     build:
@@ -43,10 +60,10 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  dagster_service:  # Make sure this service is defined properly
+  dagster_service:
     build:
       context: .
-      dockerfile: Dockerfile.dagster  # Use the custom Dockerfile for Dagster
+      dockerfile: Dockerfile.dagster
     container_name: dagster_service
     ports:
       - "3000:3000"
@@ -55,7 +72,7 @@ services:
     volumes:
       - ./dagster_home:/dagster_home
       - ./src:/app/src
-    command: ["dagit", "-h", "0.0.0.0", "-p", "3000"]  # Ensures Dagster web interface runs with dagit
+    command: ["dagit", "-h", "0.0.0.0", "-p", "3000"]
 
 volumes:
   mlflow_data:
