@@ -1,8 +1,6 @@
 # orchestrator/assets.py
-
-import pandas as pd
+from src.models.predict_model import predict
 from dagster import asset, AssetMaterialization, Output, AssetIn
-from src.data.load_data import load_data
 from src.data.process_data import (
     define_data_columns,
     encode_categorical_columns,
@@ -10,10 +8,12 @@ from src.data.process_data import (
     clean_column_names,
     save_processed_data,
 )
+import pandas as pd
+
 from src.data.split_data import split_data
 from src.models.train_model import train_model, save_model
-from src.models.predict_model import predict
 from src.models.evaluate_model import evaluate
+from src.data.load_data import load_data
 
 @asset(
     description="Loads and processes raw predictive maintenance data, then saves the processed CSV.",
@@ -86,7 +86,10 @@ def evaluation_metrics_asset(context, trained_model_asset):
     (model, X_test, y_test) = trained_model_asset
     context.log.info("Evaluating model on test set...")
 
-    f1, acc = evaluate(y_test, model.predict(X_test))
+    results = evaluate(y_test, model.predict(X_test))
+    f1 = results["F1 Score"]
+    acc = results["Accuracy"]
+    
     yield AssetMaterialization(
         asset_key="evaluation_metrics_asset",
         description=f"F1: {f1:.4f}, Accuracy: {acc:.4f}"
