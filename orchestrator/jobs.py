@@ -56,7 +56,9 @@ def evaluate_model_op(context, model_tuple):
     """Evaluate model and log metrics."""
     try:
         model, X_test, y_test = model_tuple
-        f1, acc = evaluate(y_test, model.predict(X_test))
+        results = evaluate(y_test, model.predict(X_test))
+        f1 = results["F1 Score"]
+        acc = results["Accuracy"]
         context.log.info(f"Evaluation complete: F1 Score = {f1:.4f}, Accuracy = {acc:.4f}")
     except Exception as e:
         context.log.error(f"Error during model evaluation: {e}")
